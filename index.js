@@ -5,10 +5,6 @@ const connection = require("./db/connection");
 
 
 
-
-
-
-
 // function init() {
 //     inquiryPrompts();
 
@@ -59,10 +55,11 @@ function inquiryPrompts() {
 // Add departments, empRoles, employees
 
 async function viewAllEmployees() {
-   const employees = await connection.query("SELECT * FROM employee")
-        console.log(employees);
-    
-    console.log( "hello")
+    connection.query("SELECT * FROM department", function (err, data){
+        console.log(data)
+        console.table(data);
+        inquiryPrompts();
+    })
 }
 
 function viewAllDepartments() {
