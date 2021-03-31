@@ -42,6 +42,9 @@ function inquiryPrompts() {
                 case "Add a role":
                     return addARole();
                     break;
+                case "Update employee role":
+                    return updateARole();
+                    break;
                 default: connection.end();
             }
         })
@@ -113,7 +116,6 @@ async function addARole() {
 
 async function addAnEmployee() {
     const departments = await connection.query("SELECT * FROM department")
-    console.log(departments)
     const departmentChoices = departments.map(({ id, name }) => ({
         name: name,
         value: id,
@@ -152,50 +154,40 @@ async function addAnEmployee() {
     inquiryPrompts()
 };
 
+async function updateARole() {
+    const employees = await connection.query("SELECT * FROM employee")
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+        name: first_name + " " + last_name,
+        value: id,
+    }))
+    const roles = await connection.query("SELECT * FROM role")
+    const roleChoices = roles.map(({ id, title }) => ({
+        name: title,
+        value: id,
+    }))
+    const employee = await inquirer.prompt([
+        {
+            type: "list",
+            name: "id",
+            message: "Who's role are we changing?",
+            choices: employeeChoices
+               
+        
+        },
+        {
+            type: "list",
+            name: "role_id",
+            message: "Which role would you like to change?",
+            choices: roleChoices
+        },
+    ])
+    console.log(employeeChoices, roleChoices)
+    console.log(employee)
+    const result = await connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [employee.role_id, employee.id])
+    // var sql = mysql.format('UPDATE posts SET modified = ? WHERE id = ?', [CURRENT_TIMESTAMP, 42]);
 
-//     // insert the item into our database
-// const result = await connection.query("INSERT INTO employee SET ?", {
-//     item_name,
-//     category: item_category,
-//     starting_bid: item_price,
-//     highest_bid: item_price,
-//   });
-
-//   console.log("Item inserted successfully!");
-// } catch (err) {
-//   console.log("Whoopsy!");
-// }
-// inquiryPrompts();
-
-
-// function addADepartment() {
-//     inquirer.prompt({
-//         type: "list",
-//         name: "type",
-//         message: "What type of employee are we adding?",
-//         choices: ["Management", "Engineering", "Accounting"]
-
-//     })
-
-
-// }
-
-// function addAempRole() {
-//     inquirer.prompt({
-//         type: "list",
-//         name: "type",
-//         message: "What type of employee are we adding?",
-//         choices: ["Manager", "Engineer", "Accountant"]
-
-//     })
-
-
-// }
-
-// View departments, empRoles, employees
-
-// Update employee empRoles
-
-// console.log("Listening on port " + PORT);
+    console.table(result)
+    inquiryPrompts()
+}; 
 
 inquiryPrompts()
