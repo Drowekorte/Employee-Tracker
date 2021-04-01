@@ -1,10 +1,8 @@
+// Zinits was here 
+
 const inquirer = require('inquirer');
 const connection = require("./db/connection");
 
-// function init() {
-//     inquiryPrompts();
-
-// };
 
 function inquiryPrompts() {
     return inquirer.prompt([
@@ -68,7 +66,7 @@ function viewAllDepartments() {
 }
 
 function viewAllRoles() {
-    connection.query("SELECT * FROM roles", function (err, data) {
+    connection.query("SELECT * FROM role", function (err, data) {
         console.table(data);
         inquiryPrompts();
     })
